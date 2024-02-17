@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <cstdlib>
-#include <ctime>
+#include <cstdlib> // สำหรับการใช้ฟังก์ชัน rand()
+#include <ctime>   // สำหรับการใช้ฟังก์ชัน time()
 
 using namespace std;
 
@@ -11,6 +11,17 @@ class player{
     public:
         vector<string> specialcard;
         void drawspecialcard();
+        void stealresource();
+};
+
+class resource{
+    public:
+        int wood;
+        int grain;
+        int brickl;
+        int ore;
+        int sheep;
+        player p;
 };
 
 void player::drawspecialcard(){
@@ -27,7 +38,12 @@ void player::drawspecialcard(){
     else specialcard.push_back("block");
 }
 
-int main() {    
+void player::stealresource(){
+    
+}
+    
+
+int main(){    
     srand(time(0));
     player p1;
     for(int i = 0; i < 20;i++){
