@@ -101,11 +101,21 @@ void steal(player& thief, player& target, string resource_type, int num) {
 
 int main(){    
     srand(time(0));
-    
+    vector<player*> players;    
     player p1{"p1"};
     player p2{"p2"};
     player p3{"p3"};
     player p4{"p4"};
+    
+    players.push_back(&p1);
+    players.push_back(&p2);
+    players.push_back(&p3);
+    players.push_back(&p4);
+  
+    cout << "First player: " << players[0]->name << endl;
+    cout << "Second player: " << players[1]->name << endl;
+    cout << "Third player: " << players[2]->name << endl;
+    cout << "Fourth player: " << players[3]->name << endl;
     
     string player_name1;
     string player_name2;
