@@ -1,4 +1,6 @@
 #include <iostream>
+#include <algorithm>
+#include <random>
 #include <string>
 #include <vector>
 #include <cstdlib>
@@ -15,14 +17,33 @@ class resource{
         int sheep;
 };
 class player{
-    string name;
-    int cards;
     public:
+        string name; 
+        int cards;
         vector<string> specialcard;
         resource p;
         void drawspecialcard();
         void stealresource(player& target_player, resource& target_resources,string resource_type,int n);
 };
+
+void customShuffle(vector<player*>& players) {
+    int n = players.size();
+    for (int i = n - 1; i > 0; --i) {
+        int j = rand() % (i + 1);
+        swap(players[i], players[j]);
+    }
+}
+
+void startTurn(player& p1, player& p2, player& p3, player& p4) {
+    vector<player*> players = {&p1, &p2, &p3, &p4};
+    customShuffle(players);
+
+    cout << "Turn order for this round:" << endl;
+    for (int i = 0; i < players.size(); ++i) {
+        cout << i + 1 << ". " << players[i]->name << endl;
+    }
+    cout << endl;
+}
 
 void player::drawspecialcard(){
     vector<int> cards;
@@ -80,10 +101,12 @@ void steal(player& thief, player& target, string resource_type, int num) {
 
 int main(){    
     srand(time(0));
-    player p1;
-    player p2;
-    player p3;
-    player p4;
+    
+    player p1{"p1"};
+    player p2{"p2"};
+    player p3{"p3"};
+    player p4{"p4"};
+    
     string player_name1;
     string player_name2;
     string resources;
@@ -116,9 +139,18 @@ int main(){
     p4.p.brickl = 5;
     p4.p.ore = 5;
     p4.p.sheep = 5;
-
-    cout << "player ? : ";
-    cin >> player_name1;
+    
+    for(int i = 0; i < 4;i++){
+    vector<player*> players = {&p1, &p2, &p3, &p4};
+    customShuffle(players);
+    cout << "Turn order for this round:" << endl;
+    for (int i = 0; i < players.size(); ++i){
+        cout << i + 1 << ". " << players[i]->name << endl;
+    }
+    cout << endl;
+    for(int i = 0; i < 4;i++){
+    cout << "player " << players[i]->name << " " << endl;
+    player_name1 = players[i]->name;
     cout << "player steal ? : ";
     cin >> player_name2;
     cout << "Enter the type of resource you want to steal (wood, grain, brick, ore, sheep): ";
@@ -127,7 +159,7 @@ int main(){
     cin >> num;
     
     if(player_name1 == "p1" && player_name2 == "p2"){
-        steal(p1, p2, resources, num);
+        steal(p1, p2, resources,num);
     }else if(player_name1 == "p1" && player_name2 == "p3"){
         steal(p1, p3, resources, num);
     }else if(player_name1 == "p1" && player_name2 == "p4"){
@@ -156,6 +188,7 @@ int main(){
     cout << "p2 " << p2.p.wood << " " << p2.p.grain << " " << p2.p.brickl << " " << p2.p.ore << " " << p2.p.sheep << endl;
     cout << "p3 " << p3.p.wood << " " << p3.p.grain << " " << p3.p.brickl << " " << p3.p.ore << " " << p3.p.sheep << endl;
     cout << "p4 " << p4.p.wood << " " << p4.p.grain << " " << p4.p.brickl << " " << p4.p.ore << " " << p4.p.sheep << endl;
-
+    }
+    }
     return 0;
 }
