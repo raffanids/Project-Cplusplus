@@ -15,6 +15,7 @@ class resource{
         int sheep;
 };
 class player{
+    string name;
     int cards;
     public:
         vector<string> specialcard;
@@ -37,27 +38,42 @@ void player::drawspecialcard(){
     else specialcard.push_back("block");
 }
 
-void player::stealresource(player& target_player,resource& target_resources,string resource_type,int n){
-    if(resource_type == "wood" && target_resources.wood > 0){
+void player::stealresource(player& target_player, resource& target_resources, string resource_type, int n) {
+    if (resource_type == "wood" && target_resources.wood >= n) {
         target_resources.wood -= n;
         p.wood += n;
-    }else if(resource_type == "grain" && target_resources.grain > 0){
+    } else if (resource_type == "grain" && target_resources.grain >= n) {
         target_resources.grain -= n;
         p.grain += n;
-    }else if(resource_type == "brick" && target_resources.brickl > 0){
+    } else if (resource_type == "brick" && target_resources.brickl >= n) {
         target_resources.brickl -= n;
         p.brickl += n;
-    }else if(resource_type == "ore" && target_resources.ore > 0){
+    } else if (resource_type == "ore" && target_resources.ore >= n) {
         target_resources.ore -= n;
         p.ore += n;
-    }else if(resource_type == "sheep" && target_resources.sheep > 0){
+    } else if (resource_type == "sheep" && target_resources.sheep >= n) {
         target_resources.sheep -= n;
         p.sheep += n;
-    }else{
-        cout << "Cannot steal the specified resource from the target." << endl;
+    } else {
+        if (resource_type == "wood" && target_resources.wood > 0) {
+            p.wood += target_resources.wood;
+            target_resources.wood = 0;
+        } else if (resource_type == "grain" && target_resources.grain > 0) {
+            p.grain += target_resources.grain;
+            target_resources.grain = 0;
+        } else if (resource_type == "brick" && target_resources.brickl > 0) {
+            p.brickl += target_resources.brickl;
+            target_resources.brickl = 0;
+        } else if (resource_type == "ore" && target_resources.ore > 0) {
+            p.ore += target_resources.ore;
+            target_resources.ore = 0;
+        } else if (resource_type == "sheep" && target_resources.sheep > 0) {
+            p.sheep += target_resources.sheep;
+            target_resources.sheep = 0;
+        }
+        cout << "Cannot steal the specified resource from the target. Only stole what was available." << endl;
     }
 }
-
 void steal(player& thief, player& target, string resource_type, int num) {
     thief.stealresource(target, target.p, resource_type, num);
 }
@@ -66,6 +82,8 @@ int main(){
     srand(time(0));
     player p1;
     player p2;
+    player p3;
+    player p4;
     string player_name1;
     string player_name2;
     string resources;
@@ -74,11 +92,34 @@ int main(){
     for (int i = 0; i < p1.specialcard.size(); i++) {
         cout << p1.specialcard[i] << endl;
     }
-    p1.p.wood = 0;
+
+    p1.p.wood = 5;
+    p1.p.grain = 5;
+    p1.p.brickl = 5;
+    p1.p.ore = 5;
+    p1.p.sheep = 5;
+
     p2.p.wood = 5;
+    p2.p.grain = 5;
+    p2.p.brickl = 5;
+    p2.p.ore = 5;
+    p2.p.sheep = 5;
+
+    p3.p.wood = 5;
+    p3.p.grain = 5;
+    p3.p.brickl = 5;
+    p3.p.ore = 5;
+    p3.p.sheep = 5;
+
+    p4.p.wood = 5;
+    p4.p.grain = 5;
+    p4.p.brickl = 5;
+    p4.p.ore = 5;
+    p4.p.sheep = 5;
+
     cout << "player ? : ";
     cin >> player_name1;
-    cout << "player ? : ";
+    cout << "player steal ? : ";
     cin >> player_name2;
     cout << "Enter the type of resource you want to steal (wood, grain, brick, ore, sheep): ";
     cin >> resources;
@@ -87,12 +128,34 @@ int main(){
     
     if(player_name1 == "p1" && player_name2 == "p2"){
         steal(p1, p2, resources, num);
+    }else if(player_name1 == "p1" && player_name2 == "p3"){
+        steal(p1, p3, resources, num);
+    }else if(player_name1 == "p1" && player_name2 == "p4"){
+        steal(p1, p4, resources, num);
     }else if(player_name1 == "p2" && player_name2 == "p1"){
         steal(p2, p1, resources, num);
+    }else if(player_name1 == "p2" && player_name2 == "p3"){
+        steal(p2, p3, resources, num);
+    }else if(player_name1 == "p2" && player_name2 == "p4"){
+        steal(p2, p4, resources, num);
+    }else if(player_name1 == "p3" && player_name2 == "p1"){
+        steal(p3, p1, resources, num);
+    }else if(player_name1 == "p3" && player_name2 == "p2"){
+        steal(p3, p2, resources, num);
+    }else if(player_name1 == "p3" && player_name2 == "p4"){
+        steal(p3, p4, resources, num);
+    }else if(player_name1 == "p4" && player_name2 == "p1"){
+        steal(p4, p1, resources, num);
+    }else if(player_name1 == "p4" && player_name2 == "p2"){
+        steal(p4, p2, resources, num);
+    }else if(player_name1 == "p4" && player_name2 == "p3"){
+        steal(p4, p3, resources, num);
     }
-    
-    cout << p2.p.wood << endl;
-    cout << p1.p.wood;
+    cout << "wood grain brickl ore sheep\n";
+    cout << "p1 " << p1.p.wood << " " << p1.p.grain << " " << p1.p.brickl << " " << p1.p.ore << " " << p1.p.sheep << endl;
+    cout << "p2 " << p2.p.wood << " " << p2.p.grain << " " << p2.p.brickl << " " << p2.p.ore << " " << p2.p.sheep << endl;
+    cout << "p3 " << p3.p.wood << " " << p3.p.grain << " " << p3.p.brickl << " " << p3.p.ore << " " << p3.p.sheep << endl;
+    cout << "p4 " << p4.p.wood << " " << p4.p.grain << " " << p4.p.brickl << " " << p4.p.ore << " " << p4.p.sheep << endl;
+
     return 0;
 }
-
