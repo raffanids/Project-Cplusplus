@@ -75,8 +75,7 @@ void player::stealresource(player& target_player, resource& target_resources, st
     } else if (resource_type == "sheep" && target_resources.sheep >= n) {
         target_resources.sheep -= n;
         p.sheep += n;
-    } else {
-        if (resource_type == "wood" && target_resources.wood > 0) {
+    } else if (resource_type == "wood" && target_resources.wood > 0) {
             p.wood += target_resources.wood;
             target_resources.wood = 0;
         } else if (resource_type == "grain" && target_resources.grain > 0) {
@@ -91,10 +90,9 @@ void player::stealresource(player& target_player, resource& target_resources, st
         } else if (resource_type == "sheep" && target_resources.sheep > 0) {
             p.sheep += target_resources.sheep;
             target_resources.sheep = 0;
-        }
-        cout << "Cannot steal the specified resource from the target. Only stole what was available." << endl;
+        } else cout << "Cannot steal the specified resource from the target. Only stole what was available." << endl;
     }
-}
+
 void steal(player& thief, player& target, string resource_type, int num) {
     thief.stealresource(target, target.p, resource_type, num);
 }
