@@ -1,0 +1,26 @@
+#include <iostream>
+#include <random>
+#include <ctime>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    const int numHexes = 18; 
+    vector<int> hexNumbers(numHexes);
+
+    mt19937 rng(time(nullptr)); 
+    uniform_int_distribution<mt19937::result_type> dist(2,12); 
+
+    for (int& number : hexNumbers) {
+        number = dist(rng);
+    }
+
+    cout << "Hex numbers: ";
+    for (int number : hexNumbers) {
+        cout << number << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
