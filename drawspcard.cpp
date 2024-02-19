@@ -138,39 +138,55 @@ void player::stealresource(player& target_player, resource& target_resources, st
         } else cout << "Cannot steal the specified resource from the target. Only stole what was available." << endl;
     }
 
-void playersteal(vector<player*>& players){
+void playersteal(vector<player*>& players,int i){
     string player_name1, player_name2, resources;
     int num;
 
-    for(int i = 0; i < players.size(); ++i){
-        cout << "player " << players[i]->name << " " << endl;
-        player_name1 = players[i]->name;
+    cout << "player " << players[i]->name << " " << endl;
+    player_name1 = players[i]->name;
 
-        cout << "player steal ? : ";
-        cin >> player_name2;
+    cout << "player steal ? : ";
+    cin >> player_name2;
 
-        cout << "Enter the type of resource you want to steal (wood, grain, brick, ore, sheep): ";
-        cin >> resources;
+    cout << "Enter the type of resource you want to steal (wood, grain, brick, ore, sheep): ";
+    cin >> resources;
 
-        cout << "Enter the number of resources you want to steal: ";
-        cin >> num;
+    cout << "Enter the number of resources you want to steal: ";
+    cin >> num;
 
-        checksteal(players, player_name1, player_name2, resources, num);
-        string a[4] = {"p1", "p2", "p3", "p4"};
-        vector<player*> sortplayers;
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j < 4; j++){
-                if(players[j]->name == a[i]){
-                    sortplayers.push_back(players[j]);
-                    break;
-                }
+    checksteal(players, player_name1, player_name2, resources, num);
+        
+    string a[4] = {"p1", "p2", "p3", "p4"};
+    vector<player*> sortplayers;
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            if(players[j]->name == a[i]){
+                sortplayers.push_back(players[j]);
+                break;
             }
         }
+    }
         
-        cout << "wood grain brickl ore sheep\n";
-        for (int i = 0; i < players.size(); ++i){
-            player* currentPlayer = sortplayers[i];
-            cout << currentPlayer->name << " " << currentPlayer->p.wood << " " << currentPlayer->p.grain << " " << currentPlayer->p.brickl << " " << currentPlayer->p.ore << " " << currentPlayer->p.sheep << endl;
+    cout << "wood grain brickl ore sheep\n";
+    for (int i = 0; i < players.size(); ++i){
+        player* currentPlayer = sortplayers[i];
+        cout << currentPlayer->name << " " << currentPlayer->p.wood << " " << currentPlayer->p.grain << " " << currentPlayer->p.brickl << " " << currentPlayer->p.ore << " " << currentPlayer->p.sheep << endl;
+    }
+}
+
+void checkspecialcard(vector<player*>& players){
+    for (int i = 0; i < players.size(); ++i) {
+        for (int j = 0; j < players[i]->specialcard.size(); ++j) {
+            if(players[i]->specialcard[j] == 1){
+                cout << players[i]->name << " You have a special card." << endl;
+                cout << "Do you want to use it? (yes/no): ";
+                string useCard;
+                cin >> useCard;
+                if (useCard == "yes"){
+                    playersteal(players,i);       
+                    cout << "You used a special card! You can take another turn." << endl;
+                }
+            }
         }
     }
 }
@@ -194,8 +210,15 @@ int main(){
     cout << "Fourth player: " << players[3]->name << endl;
     
     p1.drawspecialcard();
+    p2.drawspecialcard();
+    p3.drawspecialcard();
+    p4.drawspecialcard();
+
     for (int i = 0; i < p1.specialcard.size(); i++) {
-        cout << p1.specialcard[i] << endl;
+        cout << "p1 " << p1.specialcard[i] << endl;
+        cout << "p2 "  << p2.specialcard[i] << endl;
+        cout << "p3 "  << p3.specialcard[i] << endl;
+        cout << "p4 "  << p4.specialcard[i] << endl;
     }
 
     p1.p.wood = 5;
@@ -224,7 +247,6 @@ int main(){
     
     shufflePlayers(players);  
     printTurnOrder(players);
-    playersteal(players);
-   
+    checkspecialcard(players);
     return 0;
 }
