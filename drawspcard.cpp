@@ -59,6 +59,50 @@ void player::drawspecialcard(){
     else specialcard.push_back("block");
 }
 
+void steal(player& thief, player& target, string resource_type, int num) {
+    thief.stealresource(target, target.p, resource_type, num);
+}
+
+void checksteal(vector<player*>& players,string name1,string name2,string resources,int num){
+    string a[4] = {"p1", "p2", "p3", "p4"};
+    
+    vector<player*> sortplayers;
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            if(players[j]->name == a[i]){
+                sortplayers.push_back(players[j]);
+                break;
+            }
+        }
+    }
+    
+    if(name1 == "p1" && name2 == "p2"){
+        steal(*sortplayers[0], *sortplayers[1], resources, num);
+    } else if(name1 == "p1" && name2 == "p3"){
+        steal(*sortplayers[0], *sortplayers[2], resources, num);
+    } else if(name1 == "p1" && name2 == "p4"){
+        steal(*sortplayers[0], *sortplayers[3], resources, num);
+    } else if(name1 == "p2" && name2 == "p1"){
+        steal(*sortplayers[1], *sortplayers[0], resources, num);
+    } else if(name1 == "p2" && name2 == "p3"){
+        steal(*sortplayers[1], *sortplayers[2], resources, num);
+    } else if(name1 == "p2" && name2 == "p4"){
+        steal(*sortplayers[1], *sortplayers[3], resources, num);
+    } else if(name1 == "p3" && name2 == "p1"){
+        steal(*sortplayers[2], *sortplayers[0], resources, num);
+    } else if(name1 == "p3" && name2 == "p2"){
+        steal(*sortplayers[2], *sortplayers[1], resources, num);
+    } else if(name1 == "p3" && name2 == "p4"){
+        steal(*sortplayers[2], *sortplayers[3], resources, num);
+    } else if(name1 == "p4" && name2 == "p1"){
+        steal(*sortplayers[3], *sortplayers[0], resources, num);
+    } else if(name1 == "p4" && name2 == "p2"){
+        steal(*sortplayers[3], *sortplayers[1], resources, num);
+    } else if(name1 == "p4" && name2 == "p3"){
+        steal(*sortplayers[3], *sortplayers[2], resources, num);
+    }
+}
+
 void player::stealresource(player& target_player, resource& target_resources, string resource_type, int n) {
     if (resource_type == "wood" && target_resources.wood >= n) {
         target_resources.wood -= n;
@@ -92,10 +136,6 @@ void player::stealresource(player& target_player, resource& target_resources, st
             target_resources.sheep = 0;
         } else cout << "Cannot steal the specified resource from the target. Only stole what was available." << endl;
     }
-
-void steal(player& thief, player& target, string resource_type, int num) {
-    thief.stealresource(target, target.p, resource_type, num);
-}
 
 int main(){    
     srand(time(0));
@@ -149,7 +189,6 @@ int main(){
     p4.p.sheep = 5;
     
     for(int i = 0; i < 4;i++){
-    vector<player*> players = {&p1, &p2, &p3, &p4};
     customShuffle(players);
     cout << "Turn order for this round:" << endl;
     for (int i = 0; i < players.size(); ++i){
@@ -166,31 +205,8 @@ int main(){
     cout << "Enter the number of resources you want to steal: ";
     cin >> num;
     
-    if(player_name1 == "p1" && player_name2 == "p2"){
-        steal(p1, p2, resources,num);
-    }else if(player_name1 == "p1" && player_name2 == "p3"){
-        steal(p1, p3, resources, num);
-    }else if(player_name1 == "p1" && player_name2 == "p4"){
-        steal(p1, p4, resources, num);
-    }else if(player_name1 == "p2" && player_name2 == "p1"){
-        steal(p2, p1, resources, num);
-    }else if(player_name1 == "p2" && player_name2 == "p3"){
-        steal(p2, p3, resources, num);
-    }else if(player_name1 == "p2" && player_name2 == "p4"){
-        steal(p2, p4, resources, num);
-    }else if(player_name1 == "p3" && player_name2 == "p1"){
-        steal(p3, p1, resources, num);
-    }else if(player_name1 == "p3" && player_name2 == "p2"){
-        steal(p3, p2, resources, num);
-    }else if(player_name1 == "p3" && player_name2 == "p4"){
-        steal(p3, p4, resources, num);
-    }else if(player_name1 == "p4" && player_name2 == "p1"){
-        steal(p4, p1, resources, num);
-    }else if(player_name1 == "p4" && player_name2 == "p2"){
-        steal(p4, p2, resources, num);
-    }else if(player_name1 == "p4" && player_name2 == "p3"){
-        steal(p4, p3, resources, num);
-    }
+    checksteal(players,player_name1,player_name2,resources,num);
+
     cout << "wood grain brickl ore sheep\n";
     cout << "p1 " << p1.p.wood << " " << p1.p.grain << " " << p1.p.brickl << " " << p1.p.ore << " " << p1.p.sheep << endl;
     cout << "p2 " << p2.p.wood << " " << p2.p.grain << " " << p2.p.brickl << " " << p2.p.ore << " " << p2.p.sheep << endl;
