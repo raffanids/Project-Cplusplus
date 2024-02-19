@@ -142,8 +142,7 @@ void player::stealresource(player& target_player, resource& target_resources, st
 void playersteal(vector<player*>& players,int i){
     string player_name1, player_name2, resources;
     int num;
-
-    cout << "player " << players[i]->name << " " << endl;
+    
     player_name1 = players[i]->name;
 
     cout << "player steal ? : ";
@@ -231,52 +230,30 @@ int main(){
     players.push_back(&p2);
     players.push_back(&p3);
     players.push_back(&p4);
-  
-    cout << "First player: " << players[0]->name << endl;
-    cout << "Second player: " << players[1]->name << endl;
-    cout << "Third player: " << players[2]->name << endl;
-    cout << "Fourth player: " << players[3]->name << endl;
-    
-    p1.drawspecialcard();
-    p2.drawspecialcard();
-    p3.drawspecialcard();
-    p4.drawspecialcard();
 
-    for (int i = 0; i < p1.specialcard.size(); i++) {
-        cout << "p1 " << p1.specialcard[i] << endl;
-        cout << "p2 "  << p2.specialcard[i] << endl;
-        cout << "p3 "  << p3.specialcard[i] << endl;
-        cout << "p4 "  << p4.specialcard[i] << endl;
+    for (int i = 0; i < players.size(); ++i) {
+        players[i]->drawspecialcard();
+    }
+    
+    for (int i = 0; i < players.size(); ++i) {
+        cout << players[i]->name << " special cards: " ;
+        for (int j = 0; j < players[i]->specialcard.size(); ++j) {
+            cout << players[i]->specialcard[j] << endl;
+        }
+    }
+    
+    for(int i = 0; i < players.size(); i++){
+        players[i]->p.wood = 5;
+        players[i]->p.grain = 5;
+        players[i]->p.brickl = 5;
+        players[i]->p.ore = 5;
+        players[i]->p.sheep = 5;
     }
 
-    p1.p.wood = 5;
-    p1.p.grain = 5;
-    p1.p.brickl = 5;
-    p1.p.ore = 5;
-    p1.p.sheep = 5;
-
-    p2.p.wood = 5;
-    p2.p.grain = 5;
-    p2.p.brickl = 5;
-    p2.p.ore = 5;
-    p2.p.sheep = 5;
-
-    p3.p.wood = 5;
-    p3.p.grain = 5;
-    p3.p.brickl = 5;
-    p3.p.ore = 5;
-    p3.p.sheep = 5;
-
-    p4.p.wood = 5;
-    p4.p.grain = 5;
-    p4.p.brickl = 5;
-    p4.p.ore = 5;
-    p4.p.sheep = 5;
     for(int i = 0; i < 4;i++){
-    p1.blocked = false;
-    p2.blocked = false;
-    p3.blocked = false;
-    p4.blocked = false;
+        for(int j = 0; j < players.size();j++){
+            players[j]->blocked = false;
+        }
     shufflePlayers(players);  
     printTurnOrder(players);
     checkspecialcard(players);
