@@ -21,6 +21,7 @@ class player{
         string name; 
         int cards;
         vector<int> specialcard;
+        bool blocked;
         resource p;
         void drawspecialcard();
         void stealresource(player& target_player, resource& target_resources,string resource_type,int n);
@@ -174,9 +175,26 @@ void playersteal(vector<player*>& players,int i){
     }
 }
 
+bool isBlocked(vector<player*>& players){
+    string name;
+    cout << "player block ? : ";
+    cin >> name;
+    for (int i = 0; i < players.size(); i++){
+        if (players[i]->name == name) {
+            players[i]->blocked = true;
+            return true;
+        }
+    }
+    return false;
+}
+
 void checkspecialcard(vector<player*>& players){
-    for (int i = 0; i < players.size(); ++i) {
-        for (int j = 0; j < players[i]->specialcard.size(); ++j) {
+    for (int i = 0; i < players.size(); ++i){
+        if(players[i]->blocked == true){
+            cout << players[i]->name << " is blocked and cannot play this turn." << endl;
+            continue;
+        }
+        for (int j = 0; j < players[i]->specialcard.size(); ++j){
             if(players[i]->specialcard[j] == 1){
                 cout << players[i]->name << " You have a special card." << endl;
                 cout << "Do you want to use it? (yes/no): ";
@@ -184,6 +202,16 @@ void checkspecialcard(vector<player*>& players){
                 cin >> useCard;
                 if (useCard == "yes"){
                     playersteal(players,i);       
+                    cout << "You used a special card! You can take another turn." << endl;
+                }
+            }
+            if(players[i]->specialcard[j] == 2){
+                cout << players[i]->name << " You have a special card." << endl;
+                cout << "Do you want to use it? (yes/no): ";
+                string useCard;
+                cin >> useCard;
+                if (useCard == "yes"){
+                    isBlocked(players);       
                     cout << "You used a special card! You can take another turn." << endl;
                 }
             }
@@ -244,9 +272,14 @@ int main(){
     p4.p.brickl = 5;
     p4.p.ore = 5;
     p4.p.sheep = 5;
-    
+    for(int i = 0; i < 4;i++){
+    p1.blocked = false;
+    p2.blocked = false;
+    p3.blocked = false;
+    p4.blocked = false;
     shufflePlayers(players);  
     printTurnOrder(players);
     checkspecialcard(players);
+    }
     return 0;
 }
