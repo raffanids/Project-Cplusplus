@@ -20,7 +20,7 @@ class player{
     public:
         string name; 
         int cards;
-        vector<string> specialcard;
+        vector<int> specialcard;
         resource p;
         void drawspecialcard();
         void stealresource(player& target_player, resource& target_resources,string resource_type,int n);
@@ -34,10 +34,11 @@ void customShuffle(vector<player*>& players) {
     }
 }
 
-void startTurn(player& p1, player& p2, player& p3, player& p4) {
-    vector<player*> players = {&p1, &p2, &p3, &p4};
+void shufflePlayers(vector<player*>& players) {
     customShuffle(players);
+}
 
+void printTurnOrder(const vector<player*>& players) {
     cout << "Turn order for this round:" << endl;
     for (int i = 0; i < players.size(); ++i) {
         cout << i + 1 << ". " << players[i]->name << endl;
@@ -55,8 +56,8 @@ void player::drawspecialcard(){
     
     cards.erase(cards.begin() + index);
     
-    if(card%2 == 0) specialcard.push_back("steal");
-    else specialcard.push_back("block");
+    if(card%2 == 0) specialcard.push_back(1); //steal
+    else specialcard.push_back(2); //block
 }
 
 void steal(player& thief, player& target, string resource_type, int num) {
@@ -137,6 +138,43 @@ void player::stealresource(player& target_player, resource& target_resources, st
         } else cout << "Cannot steal the specified resource from the target. Only stole what was available." << endl;
     }
 
+void playersteal(vector<player*>& players){
+    string player_name1, player_name2, resources;
+    int num;
+
+    for(int i = 0; i < players.size(); ++i){
+        cout << "player " << players[i]->name << " " << endl;
+        player_name1 = players[i]->name;
+
+        cout << "player steal ? : ";
+        cin >> player_name2;
+
+        cout << "Enter the type of resource you want to steal (wood, grain, brick, ore, sheep): ";
+        cin >> resources;
+
+        cout << "Enter the number of resources you want to steal: ";
+        cin >> num;
+
+        checksteal(players, player_name1, player_name2, resources, num);
+        string a[4] = {"p1", "p2", "p3", "p4"};
+        vector<player*> sortplayers;
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                if(players[j]->name == a[i]){
+                    sortplayers.push_back(players[j]);
+                    break;
+                }
+            }
+        }
+        
+        cout << "wood grain brickl ore sheep\n";
+        for (int i = 0; i < players.size(); ++i){
+            player* currentPlayer = sortplayers[i];
+            cout << currentPlayer->name << " " << currentPlayer->p.wood << " " << currentPlayer->p.grain << " " << currentPlayer->p.brickl << " " << currentPlayer->p.ore << " " << currentPlayer->p.sheep << endl;
+        }
+    }
+}
+
 int main(){    
     srand(time(0));
     vector<player*> players;    
@@ -155,10 +193,6 @@ int main(){
     cout << "Third player: " << players[2]->name << endl;
     cout << "Fourth player: " << players[3]->name << endl;
     
-    string player_name1;
-    string player_name2;
-    string resources;
-    int num;
     p1.drawspecialcard();
     for (int i = 0; i < p1.specialcard.size(); i++) {
         cout << p1.specialcard[i] << endl;
@@ -188,31 +222,9 @@ int main(){
     p4.p.ore = 5;
     p4.p.sheep = 5;
     
-    for(int i = 0; i < 4;i++){
-    customShuffle(players);
-    cout << "Turn order for this round:" << endl;
-    for (int i = 0; i < players.size(); ++i){
-        cout << i + 1 << ". " << players[i]->name << endl;
-    }
-    cout << endl;
-    for(int i = 0; i < 4;i++){
-    cout << "player " << players[i]->name << " " << endl;
-    player_name1 = players[i]->name;
-    cout << "player steal ? : ";
-    cin >> player_name2;
-    cout << "Enter the type of resource you want to steal (wood, grain, brick, ore, sheep): ";
-    cin >> resources;
-    cout << "Enter the number of resources you want to steal: ";
-    cin >> num;
-    
-    checksteal(players,player_name1,player_name2,resources,num);
-
-    cout << "wood grain brickl ore sheep\n";
-    cout << "p1 " << p1.p.wood << " " << p1.p.grain << " " << p1.p.brickl << " " << p1.p.ore << " " << p1.p.sheep << endl;
-    cout << "p2 " << p2.p.wood << " " << p2.p.grain << " " << p2.p.brickl << " " << p2.p.ore << " " << p2.p.sheep << endl;
-    cout << "p3 " << p3.p.wood << " " << p3.p.grain << " " << p3.p.brickl << " " << p3.p.ore << " " << p3.p.sheep << endl;
-    cout << "p4 " << p4.p.wood << " " << p4.p.grain << " " << p4.p.brickl << " " << p4.p.ore << " " << p4.p.sheep << endl;
-    }
-    }
+    shufflePlayers(players);  
+    printTurnOrder(players);
+    playersteal(players);
+   
     return 0;
 }
