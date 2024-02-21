@@ -64,6 +64,31 @@ public:
     int sheep;
 };
 
+class Bank {
+public:
+    map<string, int> resources;
+    int roads;
+    int settlements;
+    int cities;
+    int blockCards;
+    int stealCards;
+
+    Bank() {
+        resources["wood"] = 19;
+        resources["brick"] = 19;
+        resources["sheep"] = 19;
+        resources["grain"] = 19;
+        resources["ore"] = 19;
+
+        roads = 15;
+        settlements = 5;
+        cities = 4;
+
+        blockCards = 5;
+        stealCards = 5;
+    }
+};
+
 class Player {
 private:
     string name;
