@@ -10,23 +10,22 @@
 using namespace std;
 
 class Building {
-protected:
-    int victoryPoints;
-    string owner;
+    protected:
+        int victoryPoints;
+        string owner;
+    public:
+        Building(const string& owner) : owner(owner) {}
+        virtual ~Building() {}
 
-public:
-    Building(const string& owner) : owner(owner) {}
-    virtual ~Building() {}
-
-    virtual int getVictoryPoints() const = 0;
-    const string& getOwner() const { return owner; }
+        virtual int getVictoryPoints() const = 0;
+        const string& getOwner() const { return owner; }
 };
 
 class Road : public Building {
-public:
-    Road(const string& owner) : Building(owner) {
-        victoryPoints = 0;
-    }
+    public:
+        Road(const string& owner) : Building(owner) {
+            victoryPoints = 0;
+        }
 
     int getVictoryPoints() const override {
         return victoryPoints;
@@ -34,9 +33,9 @@ public:
 };
 
 class Settlement : public Building {
-public:
-    Settlement(const string& owner) : Building(owner) {
-        victoryPoints = 1;
+    public:
+        Settlement(const string& owner) : Building(owner) {
+            victoryPoints = 1;
     }
 
     int getVictoryPoints() const override {
@@ -45,9 +44,9 @@ public:
 };
 
 class City : public Building {
-public:
-    City(const string& owner) : Building(owner) {
-        victoryPoints = 2;
+    public:
+        City(const string& owner) : Building(owner) {
+            victoryPoints = 2;
     }
 
     int getVictoryPoints() const override {
@@ -56,22 +55,22 @@ public:
 };
 
 class Resource {
-public:
-    int wood;
-    int grain;
-    int brick;
-    int ore;
-    int sheep;
+    public:
+        int wood;
+        int grain;
+        int brick;
+        int ore;
+        int sheep;
 };
 
 class Bank {
-public:
-    map<string, int> resources;
-    int roads;
-    int settlements;
-    int cities;
-    int blockCards;
-    int stealCards;
+    public:
+        map<string, int> resources;
+        int roads;
+        int settlements;
+        int cities;
+        int blockCards;
+        int stealCards;
 
     Bank() {
         resources["wood"] = 19;
@@ -130,7 +129,7 @@ public:
         return blocked;
     }
 
-    void setBlocked(bool isBlocked) { // เพิ่มฟังก์ชัน setBlocked เพื่อกำหนดค่าตัวแปร blocked
+    void setBlocked(bool isBlocked) {
         blocked = isBlocked;
     }
 
@@ -138,22 +137,22 @@ public:
         int card = rand() % 2 + 1;
         if (card == 1) {
             if (bank.stealCards > 0) {
-                specialcard.push_back("stealcard"); // สุ่มการ์ด steal และเก็บลงใน specialcard
+                specialcard.push_back("stealcard");
                 bank.stealCards--;
                 cout << "You drew a special card (steal). You now have " << bank.stealCards << " steal card(s) left." << endl;
             } else {
                 cout << "No steal cards left in the bank." << endl;
             }
-            } else if (card == 2) {
-                if (bank.blockCards > 0) {
-                specialcard.push_back("blockcard"); // สุ่มการ์ด block และเก็บลงใน specialcard
-                bank.blockCards--;
-                cout << "You drew a special card (block). You now have " << bank.blockCards << " block card(s) left." << endl;
-            } else {
-                cout << "No block cards left in the bank." << endl;
-        }
+                } else if (card == 2) {
+                    if (bank.blockCards > 0) {
+                    specialcard.push_back("blockcard"); 
+                    bank.blockCards--;
+                    cout << "You drew a special card (block). You now have " << bank.blockCards << " block card(s) left." << endl;
+                } else {
+                    cout << "No block cards left in the bank." << endl;
+                }
+            }
     }
-}
 
     void stealResource(Player& targetPlayer, map<string, int>& targetResources, const string& resourceType, int amount) {
         if (targetResources["wood"] >= amount && resourceType == "wood") {
@@ -175,7 +174,6 @@ public:
             cout << "Cannot steal the specified resource from the target. Only stole what was available." << endl;
         }
     }
-
 
     void displayStatus() {
         cout << "Player: " << name << "\nResources:\n";
@@ -287,13 +285,21 @@ bool isBlocked(vector<Player*>& players) {
     return false;
 }
 
-void checkdrawSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
+void drawspcard(Player* a,vector<Player*>& players,Bank& bank){
+    string ans;
+    cout << a->getName() << " Want to draw SpecialCard?(yes/no) : ";
+    cin >> ans;
+    if(ans == "yes") a->drawSpecialCard(bank);
+    if(ans == "no") return;
+}
+
+void checkBlocked(Player* a, vector<Player*>& players){
     if (a->isBlocked()) {
         cout << a->getName() << " is blocked and cannot play this turn." << endl;
-        return;
     }
+}
 
-    a->drawSpecialCard(bank);
+void checkSpecialCard(Player* a, vector<Player*>& players, Bank& bank) { 
     vector<string> specialcards = a->getSpecialCard();
 
     for (const string& card : specialcards) {
@@ -315,10 +321,25 @@ void checkdrawSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
     }
 }
 
+void initializeGame(vector<Player*>& players) {
+    for (auto& player : players) {
+        player->initializeResources();
+    }
+}
+
+void starTurn(vector<Player*>& players){
+    for (auto& player : players) {
+        player->setBlocked(false);
+    }
+    shufflePlayers(players);
+    printTurnOrder(players);
+}
+
 int main() {
     srand(time(0));
-    vector<Player*> players;
     Bank bank;
+    vector<Player*> players;
+    
     Player p1("p1");
     Player p2("p2");
     Player p3("p3");
@@ -329,20 +350,20 @@ int main() {
     players.push_back(&p3);
     players.push_back(&p4);
 
-    for (auto& player : players) {
-        player->initializeResources();
-    }
+    initializeGame(players);
     
-    for (auto& player : players) {
-        player->setBlocked(false);
+    for(int i = 0; i < 10;i++){
+        starTurn(players);
+    for (auto& player : players){
+        if(player->isBlocked()) {
+            checkBlocked(player,players);
+            continue;
+        }
+        drawspcard(player, players, bank);
+        checkSpecialCard(player, players, bank);
     }
-    shufflePlayers(players);
-    printTurnOrder(players);
-    
-    for (auto& player : players) {
-        checkdrawSpecialCard(player, players, bank);
     }
-    
     return 0;
 }
+
 
