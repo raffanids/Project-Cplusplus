@@ -286,11 +286,16 @@ bool isBlocked(vector<Player*>& players) {
 }
 
 void drawspcard(Player* a,vector<Player*>& players,Bank& bank){
+    int luckdraw = rand()%10+1;
     string ans;
     cout << a->getName() << " Want to draw SpecialCard?(yes/no) : ";
     cin >> ans;
-    if(ans == "yes") a->drawSpecialCard(bank);
+    if(ans == "yes"){
+        if(luckdraw == 9){
+        a->drawSpecialCard(bank);
+        }else return; 
     if(ans == "no") return;
+    }
 }
 
 void checkBlocked(Player* a, vector<Player*>& players){
@@ -301,12 +306,28 @@ void checkBlocked(Player* a, vector<Player*>& players){
 
 void checkSpecialCard(Player* a, vector<Player*>& players, Bank& bank) { 
     vector<string> specialcards = a->getSpecialCard();
-
+    string useCard;
+    string nameCard;
     for (const string& card : specialcards) {
+        if (card == "stealcard" && card == "blockcard") {
+            cout << a->getName() << " You have a special card." << endl;
+            cout << "Do you want to use it? (yes/no): ";
+            cin >> useCard;
+            if (useCard == "yes") {
+                cout << "Use Steal (1) or block (2) : ";
+                cin >> nameCard;
+                if (card == "stealcard") {
+                    playerSteal(players, distance(players.begin(), find(players.begin(), players.end(), a)));
+                } else if (card == "blockcard") {
+                    isBlocked(players);
+                    cout << "You used a special card! You can take another turn." << endl;
+                }
+            else{ break; }
+            }
+        }
         if (card == "stealcard" || card == "blockcard") {
             cout << a->getName() << " You have a special card." << endl;
             cout << "Do you want to use it? (yes/no): ";
-            string useCard;
             cin >> useCard;
 
             if (useCard == "yes") {
@@ -316,6 +337,7 @@ void checkSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
                     isBlocked(players);
                     cout << "You used a special card! You can take another turn." << endl;
                 }
+            else{ break; }
             }
         }
     }
