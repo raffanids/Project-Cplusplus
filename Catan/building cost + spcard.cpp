@@ -94,7 +94,7 @@ private:
     string name;
     map<string, int> resources;
     vector<unique_ptr<Building>> buildings;
-    vector<int> specialcard;
+    vector<string> specialcard;
     bool blocked;
 
 public:
@@ -122,7 +122,7 @@ public:
         resources["ore"] = 0;
     }
 
-    vector<int> getSpecialCard() const {
+    vector<string> getSpecialCard() const {
         return specialcard;
     }
 
@@ -134,18 +134,26 @@ public:
         blocked = isBlocked;
     }
 
-    void drawSpecialCard() {
-        vector<int> cards;
-        for (int i = 1; i <= 20; ++i) {
-            cards.push_back(i);
+    void drawSpecialCard(Bank& bank) {
+        int card = rand() % 2 + 1;
+        if (card == 1) {
+            if (bank.stealCards > 0) {
+                specialcard.push_back("stealcard"); // สุ่มการ์ด steal และเก็บลงใน specialcard
+                bank.stealCards--;
+                cout << "You drew a special card (steal). You now have " << bank.stealCards << " steal card(s) left." << endl;
+            } else {
+                cout << "No steal cards left in the bank." << endl;
+            }
+            } else if (card == 2) {
+                if (bank.blockCards > 0) {
+                specialcard.push_back("blockcard"); // สุ่มการ์ด block และเก็บลงใน specialcard
+                bank.blockCards--;
+                cout << "You drew a special card (block). You now have " << bank.blockCards << " block card(s) left." << endl;
+            } else {
+                cout << "No block cards left in the bank." << endl;
         }
-        int index = rand() % cards.size();
-        int card = cards[index];
-        cards.erase(cards.begin() + index);
-
-        if (card % 2 == 0) specialcard.push_back(1); //steal
-        else specialcard.push_back(2); //block
     }
+}
 
     void stealResource(Player& targetPlayer, map<string, int>& targetResources, const string& resourceType, int amount) {
         if (targetResources["wood"] >= amount && resourceType == "wood") {
@@ -279,29 +287,26 @@ bool isBlocked(vector<Player*>& players) {
     return false;
 }
 
-void checkSpecialCard(vector<Player*>& players) {
-    for (auto& player : players) {
-        if (player->isBlocked()) {
-            cout << player->getName() << " is blocked and cannot play this turn." << endl;
-            continue;
-        }
-        for (int card : player->getSpecialCard()) {
-            if (card == 1) {
-                cout << player->getName() << " You have a special card." << endl;
-                cout << "Do you want to use it? (yes/no): ";
-                string useCard;
-                cin >> useCard;
-                if (useCard == "yes") {
-                    playerSteal(players, distance(players.begin(), find(players.begin(), players.end(), player)));
-                    cout << "You used a special card! You can take another turn." << endl;
-                }
-            }
-            if (card == 2) {
-                cout << player->getName() << " You have a special card." << endl;
-                cout << "Do you want to use it? (yes/no): ";
-                string useCard;
-                cin >> useCard;
-                if (useCard == "yes") {
+void checkdrawSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
+    if (a->isBlocked()) {
+        cout << a->getName() << " is blocked and cannot play this turn." << endl;
+        return;
+    }
+
+    a->drawSpecialCard(bank);
+    vector<string> specialcards = a->getSpecialCard();
+
+    for (const string& card : specialcards) {
+        if (card == "stealcard" || card == "blockcard") {
+            cout << a->getName() << " You have a special card." << endl;
+            cout << "Do you want to use it? (yes/no): ";
+            string useCard;
+            cin >> useCard;
+
+            if (useCard == "yes") {
+                if (card == "stealcard") {
+                    playerSteal(players, distance(players.begin(), find(players.begin(), players.end(), a)));
+                } else if (card == "blockcard") {
                     isBlocked(players);
                     cout << "You used a special card! You can take another turn." << endl;
                 }
@@ -313,6 +318,7 @@ void checkSpecialCard(vector<Player*>& players) {
 int main() {
     srand(time(0));
     vector<Player*> players;
+    Bank bank;
     Player p1("p1");
     Player p2("p2");
     Player p3("p3");
@@ -324,29 +330,19 @@ int main() {
     players.push_back(&p4);
 
     for (auto& player : players) {
-        player->drawSpecialCard();
-    }
-
-    for (const auto& player : players) {
-        cout << player->getName() << " special cards: ";
-        for (int card : player->getSpecialCard()) {
-            cout << card << " ";
-        }
-        cout << endl;
-    }
-
-    for (auto& player : players) {
         player->initializeResources();
     }
-
-    for (int i = 0; i < 4; i++) {
-        for (auto& player : players) {
-            player->setBlocked(false);
-        }
-        shufflePlayers(players);
-        printTurnOrder(players);
-        checkSpecialCard(players);
+    
+    for (auto& player : players) {
+        player->setBlocked(false);
     }
-
+    shufflePlayers(players);
+    printTurnOrder(players);
+    
+    for (auto& player : players) {
+        checkdrawSpecialCard(player, players, bank);
+    }
+    
     return 0;
 }
+
