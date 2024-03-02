@@ -6,6 +6,8 @@
 #include <map>
 #include <memory>
 #include <ctime>
+#include <tuple>
+#include <iomanip>
 
 using namespace std;
 
@@ -58,17 +60,11 @@ public:
 class Resource {
 public:
     map<string, int> resourceCount;
-
-    Resource() {
-        resourceCount["wood"] = 0;
-        resourceCount["wool"] = 0;
-        resourceCount["brick"] = 0;
-        resourceCount["grain"] = 0;
-        resourceCount["ore"] = 0;
-    }
-
+    
     void addResource(const string& resource, int amount) {
-        resourceCount[resource] += amount;
+        if(resourceCount.find(resource) != resourceCount.end()){
+            resourceCount[resource] += amount;
+        }
     }
 
     bool deductResource(const string& resource, int amount) {
@@ -80,8 +76,8 @@ public:
     }
 
     void printResources() const {
-        for (const auto& res : resourceCount) {
-            cout << res.first << ": " << res.second << endl;
+        for (const auto& pair : resourceCount) {
+            cout << pair.first << ": " << pair.second << "\n";
         }
     }
 };
@@ -138,7 +134,7 @@ private:
     bool blocked;
 
 public:
-    Player(const string& playerName) : name(playerName), blocked(false) {}
+    Player(const string& playerName) : name(playerName), resources(), blocked(false) {}
 
     string getName() const {
         return name;
@@ -160,6 +156,32 @@ public:
         blocked = isBlocked;
     }
     
+bool addResource(const string& resource, int amount) {
+    if (resources.resourceCount[resource] + amount >= 0) {
+        resources.addResource(resource, amount);
+        return true;
+    }
+    return false;
+}
+    
+    void displayResources() const {
+        cout << "Player Resources for " << name << ":\n";
+        resources.printResources();
+    }
+    
+    void printPlayerResources() const {
+    cout << name << "'s resources:" << endl;
+    resources.printResources();
+    }
+    
+    void initializeResources() {
+        resources.addResource("wood", 0);
+        resources.addResource("brick", 0);
+        resources.addResource("sheep", 0);
+        resources.addResource("grain", 0);
+        resources.addResource("ore", 0);
+    }
+
     bool tradeWithBank(Bank& bank, const string& offerResource, int offerAmount, const string& requestResource, int requestAmount) {
         return bank.tradeWithPlayer(resources, offerResource, offerAmount, requestResource, requestAmount);
     }
@@ -176,11 +198,6 @@ public:
             cout << "Trade failed due to insufficient resources." << endl;
             return false;
         }
-    }
-    
-    void printPlayerResources() const {
-        cout << name << "'s resources:" << endl;
-        resources.printResources();
     }
 
     void drawSpecialCard(Bank& bank) {
@@ -262,6 +279,87 @@ public:
             return true;
         }
         return false;
+    }
+};
+
+class SquareCatanBoard {
+    vector<vector<tuple<bool, string, int, int, int>>> board;
+    vector<Player> players;
+    int currentPlayerIndex;
+
+public:
+    SquareCatanBoard(int numPlayers) : currentPlayerIndex(0) {
+        initializeBoard();
+        players.reserve(numPlayers);
+        for (int i = 0; i < numPlayers; ++i) {
+            players.emplace_back("Player " + to_string(i + 1));
+        }
+    }
+
+    void initializeBoard() {
+        vector<string> resources = {"Wool", "Wood", "Brick", "Grain", "Ore", "Wool", "Grain", "Ore", "Brick", "Wood", "Wool", "Grain", "Ore", "Wood", "Brick", "Grain", "Ore", "Wool"};
+        resources.insert(resources.begin() + 9, "Desert");
+
+        vector<int> numbers = {2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 3, 4, 5, 6, 8, 9, 10, 11};
+        shuffle(numbers.begin(), numbers.end(), default_random_engine(static_cast<unsigned>(time(nullptr))));
+        numbers.insert(numbers.begin() + 9, 0);
+
+        vector<int> layout = {3, 4, 5, 4, 3};
+        int resourceIndex = 0, numberIndex = 0;
+        for (int rowSize : layout) {
+            vector<tuple<bool, string, int, int, int>> row;
+            for (int j = 0; j < rowSize; ++j) {
+                row.emplace_back(true, resources[resourceIndex++], numbers[numberIndex++], 0, 0);
+            }
+            board.push_back(row);
+        }
+    }
+
+    void displayBoard() const {
+        cout << "Catan Board Layout:\n\n";
+        for (const auto& row : board) {
+            for (const auto& tile : row) {
+                string resource = get<1>(tile);
+                int number = get<2>(tile);
+                cout << setw(8) << resource 
+                          << " (" << number << ") "
+                          << " Houses: " << get<3>(tile) 
+                          << " Roads: " << get<4>(tile) << "  ";
+            }
+            cout << "\n\n";
+        }
+    }
+
+    int rollDice() {
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<> dis(1, 6);
+        return dis(gen) + dis(gen); // Sum of rolling two dice
+    }
+
+void produceResources(int roll) {
+    cout << "Dice Roll: " << roll << "\n";
+    for (auto& row : board) {
+        for (auto& tile : row) {
+            if (get<2>(tile) == roll && get<1>(tile) != "Desert") {
+                int houses = 1;
+                string resource = get<1>(tile);
+                if (players[currentPlayerIndex].addResource(resource, houses)) {
+                    cout << houses << " " << resource << "(s) produced for Player " << currentPlayerIndex + 1 << "\n";                    
+                } else {
+                    cout << "Player " << currentPlayerIndex + 1 << " has no space for more " << resource << "(s)\n";
+                }
+            }
+        }
+    }
+    players[currentPlayerIndex].printPlayerResources();
+}
+
+    void nextTurn() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        cout << "\nPlayer " << currentPlayerIndex + 1 << "'s turn:\n";
+        int roll = rollDice();
+        produceResources(roll);
     }
 };
 
@@ -380,6 +478,7 @@ void checkSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
         }
     }
 }
+
 void checktradebankresource(Player* a, vector<Player*>& players, Bank& bank){
     string trade1;
     string trade2;
@@ -460,6 +559,12 @@ void starTurn(vector<Player*>& players){
     printTurnOrder(players);
 }
 
+void initializeGame(vector<Player*>& players) {
+    for (auto& player : players) {
+        player->initializeResources();
+    }
+}
+
 int main() {
     srand(time(0));
     Bank bank;
@@ -475,8 +580,14 @@ int main() {
     players.push_back(&p3);
     players.push_back(&p4);
     
+    SquareCatanBoard catanBoard(4);
+    initializeGame(players);
     
     for(int i = 0; i < 10;i++){
+        catanBoard.displayBoard();
+        for(int i = 0; i < 4;i++){
+            catanBoard.nextTurn();
+        }
         starTurn(players);
     for (auto& player : players){
         if(player->isBlocked()) {
@@ -488,5 +599,7 @@ int main() {
         checkSpecialCard(player, players, bank);
     }
     }
+    return 0;
+}
     return 0;
 }
