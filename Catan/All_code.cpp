@@ -111,7 +111,7 @@ public:
         return name;
     }
     
-     map<string, int>& getResources() {
+    map<string, int>& getResources() {
         return resources;
     }
 
@@ -135,8 +135,20 @@ public:
         blocked = isBlocked;
     }
     
-    void addResource(string resource, int amount) {
-        resources[resource] += amount;
+    void addResource(string resource) {
+        if (resource == "Wood") {
+            resources["wood"] += 1;
+        } else if (resource == "Grain") {
+            resources["grain"] += 1;
+        } else if (resource == "Brick") {
+            resources["brick"] += 1;
+        } else if (resource == "Ore") {
+            resources["ore"] += 1;
+        } else if (resource == "Sheep") {
+            resources["sheep"] += 1;
+        } else {
+            cout << "?" << endl;
+        }
     }
     
     void drawSpecialCard(Bank& bank) {
@@ -182,7 +194,7 @@ public:
     }
 
     void displayStatus() {
-        cout << "Player: " << name << "\nResources:\n";
+        cout << "Player " << name << " Resources :\n";
         for (const auto& resource : resources) {
             cout << resource.first << ": " << resource.second << "\n";
         }
@@ -285,26 +297,27 @@ class SquareCatanBoard {
         return dis(gen) + dis(gen);
     }
 
-    void produceResources(int roll) {
+    void produceResources(vector<Player*>& players, int roll, Player* a) {
         cout << "Dice Roll: " << roll << "\n";
         for (const auto& row : board) {
             for (const auto& tile : row) {
                 if (get<2>(tile) == roll && get<1>(tile) != "Desert") {
                     int houses = 1;
                     string resource = get<1>(tile);
-                    players[currentPlayerIndex].addResource(resource, 1);
-                    cout << houses << " " << resource << "(s) produced for Player " << currentPlayerIndex + 1 << "\n";
+                    a->addResource(resource);
+                    cout << a->getName() << " ";
+                    cout << houses << " " << resource << "(s) produced for Player " << a->getName() << "\n";
                 }
             }
         }
-        players[currentPlayerIndex].displayStatus();
+        a->displayStatus();
     }
 
-    void nextTurn() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        cout << "\nPlayer " << currentPlayerIndex + 1 << "'s turn:\n";
+
+    void nextTurn(Player* a,vector<Player*>& players) {
+        cout << "\nPlayer " << a->getName() << "'s turn:\n";
         int roll = rollDice();
-        produceResources(roll);
+        produceResources(players, roll, a);
     }
 };
 
@@ -461,15 +474,13 @@ int main() {
     
     for(int i = 0; i < 10;i++){
         catanBoard.displayBoard();
-        for(int i = 0; i < 4;i++){
-            catanBoard.nextTurn();
-        }
         starTurn(players);
     for (auto& player : players){
         if(player->isBlocked()) {
             checkBlocked(player,players);
             continue;
         }
+        catanBoard.nextTurn(player,players);
         drawspcard(player, players, bank);
         checkSpecialCard(player, players, bank);
     }
