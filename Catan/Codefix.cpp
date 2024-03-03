@@ -186,7 +186,7 @@ public:
             if (bank.stealCards > 0) {
                 specialcard.push_back("stealcard");
                 bank.stealCards--;
-                cout << "You drew a special card (steal). Now have " << bank.stealCards << " steal card(s) left." << endl;
+                cout << "You drew a special card (steal). Now have " << bank.stealCards << " steal card(s) left in the bank." << endl;
             } else {
                 cout << "No steal cards left in the bank." << endl;
             }
@@ -194,7 +194,7 @@ public:
                     if (bank.blockCards > 0) {
                     specialcard.push_back("blockcard"); 
                     bank.blockCards--;
-                    cout << "You drew a special card (block). Now have " << bank.blockCards << " block card(s) left." << endl;
+                    cout << "You drew a special card (block). Now have " << bank.blockCards << " block card(s) left in the bank." << endl;
                 } else {
                     cout << "No block cards left in the bank." << endl;
                 }
@@ -342,7 +342,7 @@ class SquareCatanBoard {
     }
     
     void incresenextTurn(Player* a,vector<Player*>& players) {
-        cout << "Player " << a->getName() << "'s turn:\n";
+        cout << "\nPlayer " << a->getName() << "'s turn:\n";
         int roll = rollDice();
         produceResources(players, roll, a);
         cout << endl;
@@ -355,7 +355,7 @@ void playerSteal(vector<Player*>& players, int i) {
 
     player1 = players[i]->getName();
 
-    cout << "Player to steal from: ";
+    cout << "What player you want to steal (p1/p2/p3/p4) : ";
     cin >> player2;
 
     cout << "Enter the type of resource you want to steal (wood, grain, brick, ore, sheep): ";
@@ -592,9 +592,10 @@ int main() {
     players.push_back(&p3);
     players.push_back(&p4);
 
+
     SquareCatanBoard catanBoard(4);
     initializeGame(players);
-    
+    catanBoard.displayBoard();
     for(int i = 0; i < 2; i++){
         for(int j = 0; j < 4; j++){
             catanBoard.incresenextTurn(players[j],players);
