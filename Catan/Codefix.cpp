@@ -276,7 +276,7 @@ class SquareCatanBoard {
     }
     
     void initializeBoard() {
-        vector<string> resources = {"Sheep", "Wood", "Brick", "Grain", "Ore", "Sheep", "Grain", "Ore", "Brick", "Wood", "Sheep", "Grain", "Ore", "Wood", "Brick", "Grain", "Ore", "Sheep"};
+        vector<string> resources = {"Sheep", "Wood", "Brick", "Grain", "Ore", "Sheep", "Grain", "Ore", "Brick", "Wood", "Sheep", "Grain", "Wood"};
 
         vector<int> numbers = {2, 3, 4, 5, 6, 8, 9, 10, 11, 12 ,5, 6};
         shuffle(numbers.begin(), numbers.end(),default_random_engine(static_cast<unsigned>(std::time(nullptr))));
@@ -296,14 +296,14 @@ class SquareCatanBoard {
     void displayBoard() const {
         cout << "----------------------------------------------" << endl;
         cout << "Catan Board Layout:\n\n";
+        vector<string> resources;
+        vector<int> numbers;
         for (const auto& row : board) {
             for (const auto& tile : row) {
                 string resource = get<1>(tile);
                 int number = get<2>(tile);
-                cout << setw(8) << resource
-                          << " (" << number << ") "
-                          << " Houses: " << get<3>(tile)
-                          << " Roads: " << get<4>(tile) << "  ";
+                cout << resource << " (" << number << ") ";
+                
             }
             cout << "\n";
         }
