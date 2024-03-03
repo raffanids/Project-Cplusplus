@@ -277,13 +277,12 @@ class SquareCatanBoard {
     
     void initializeBoard() {
         vector<string> resources = {"Sheep", "Wood", "Brick", "Grain", "Ore", "Sheep", "Grain", "Ore", "Brick", "Wood", "Sheep", "Grain", "Ore", "Wood", "Brick", "Grain", "Ore", "Sheep"};
-        resources.insert(resources.begin() + 9, "Desert");
 
-        vector<int> numbers = {2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 3, 4, 5, 6, 8, 9, 10, 11};
+        vector<int> numbers = {2, 3, 4, 5, 6, 8, 9, 10, 11, 12 ,5, 6};
         shuffle(numbers.begin(), numbers.end(),default_random_engine(static_cast<unsigned>(std::time(nullptr))));
         numbers.insert(numbers.begin() + 9, 0);
 
-        vector<int> layout = {3, 4, 5, 4, 3};
+        vector<int> layout = {1, 3, 5, 3, 1};
         int resourceIndex = 0, numberIndex = 0;
         for (int rowSize : layout) {
             vector<tuple<bool, string, int, int, int>> row;
