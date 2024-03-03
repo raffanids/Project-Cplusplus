@@ -391,20 +391,20 @@ bool isBlocked(vector<Player*>& players) {
 }
 
 void drawspcard(Player* a,vector<Player*>& players,Bank& bank){
-    int luckdraw = rand()%10+1;
+    int luckdraw = rand()%5+1;
     string ans;
-    cout << "----------------------------------------------\n";
-    if(true){
+    if(luckdraw == 5){
+        cout << "----------------------------------------------\n";
         while(ans != "1"){ 
-        cout << a->getName() << " You want to draw SpecialCard? yes(1) or no(2) : ";
-        cin >> ans;
+            cout << a->getName() << " You want to draw SpecialCard? yes(1) or no(2) : ";
+            cin >> ans;
             if(ans == "1"){
-            a->drawSpecialCard(bank);
-            break;
+                a->drawSpecialCard(bank);
+                cout << "----------------------------------------------\n";
+                break;
             }
         }
     }
-    cout << "----------------------------------------------\n";
 }
 
 void checkBlocked(Player* a, vector<Player*>& players){
@@ -438,8 +438,8 @@ void checkSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
         } else {
             cout << "Invalid option! Returning to main menu." << endl;
         }
-    }
     cout << "----------------------------------------------\n";
+    }
 }
 
 void checktradebankresource(Player* a, vector<Player*>& players, Bank& bank){
@@ -534,7 +534,7 @@ void checkbuild(Player* a, vector<Player*>& players){
         a->buildCity();
         a->displayStatus();
     }else {
-        cout << "Exiting buid\n";
+        cout << "Exiting buiding\n";
         cout << "----------------------------------------------\n";
     }    
 }
