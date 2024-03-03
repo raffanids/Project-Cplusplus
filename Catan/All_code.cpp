@@ -148,6 +148,10 @@ public:
     return false;
     }
     
+    void removeSpecialCard(const string& cardName) {
+        specialcard.erase(remove(specialcard.begin(), specialcard.end(), cardName), specialcard.end());
+    }
+    
     bool tradeWithBank(Bank& bank, const string& offerResource, int offerAmount, const string& requestResource, int requestAmount) {
         if (resources[offerResource] >= offerAmount && bank.resources[requestResource] >= requestAmount) {
             resources[offerResource] -= offerAmount;
@@ -425,8 +429,10 @@ void checkSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
                 cin >> nameCard;
                 if (card == "stealcard") {
                     playerSteal(players, distance(players.begin(), find(players.begin(), players.end(), a)));
+                    a->removeSpecialCard(card);
                 } else if (card == "blockcard") {
                     isBlocked(players);
+                    a->removeSpecialCard(card);
                     cout << "You used a special card! You can take another turn." << endl;
                 }
             else{ break; }
@@ -440,8 +446,10 @@ void checkSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
             if (useCard == "yes") {
                 if (card == "stealcard") {
                     playerSteal(players, distance(players.begin(), find(players.begin(), players.end(), a)));
+                    a->removeSpecialCard(card);
                 } else if (card == "blockcard") {
                     isBlocked(players);
+                    a->removeSpecialCard(card);
                     cout << "You used a special card! You can take another turn." << endl;
                 }
             else{ break; }
@@ -514,12 +522,16 @@ void checktradeplayerresource(Player* a, vector<Player*>& players, Bank& bank) {
 
 void checktrade(Player* a, vector<Player*>& players, Bank& bank){
     string trade;
-    cout << a->getName() << " You want to trading with bank(1) or player(2) : ";
+    cout << a->getName() << " You want to trading with bank(1) or player(2) or Exit(3) : ";
     cin >> trade;
     if(trade == "1"){
         checktradebankresource(a,players,bank);
-    }else{
+        a->displayStatus();
+    }else if (trade == "2"){
         checktradeplayerresource(a,players,bank);
+        a->displayStatus();
+    }else {
+        cout << "Exiting trading\n";
     }
 }
 
@@ -570,8 +582,8 @@ int main() {
         catanBoard.nextTurn(player,players);
         if(i > 2){
         checktrade(player, players, bank);
-        }
         drawspcard(player, players, bank);
+        }
         checkSpecialCard(player, players, bank);
         cout << "----------------------------------------------" << endl;
     }
