@@ -330,7 +330,6 @@ class SquareCatanBoard {
         a->displayStatus();
     }
 
-
     void nextTurn(Player* a,vector<Player*>& players) {
         cout << "\nPlayer " << a->getName() << "'s turn:\n";
         int roll = rollDice();
@@ -407,7 +406,6 @@ void drawspcard(Player* a,vector<Player*>& players,Bank& bank){
             }
     }else return; 
 }
-
 
 void checkBlocked(Player* a, vector<Player*>& players){
     if (a->isBlocked()) {
@@ -535,6 +533,30 @@ void checktrade(Player* a, vector<Player*>& players, Bank& bank){
     }
 }
 
+void checkbuild(Player* a, vector<Player*>& players){
+    string ans;
+    cout << a->getName() << " You want to build Settlement(1) or City(2) or Exit(3) : ";
+    cin >> ans;
+    if(ans == "1"){
+        a->buildSettlement();
+        a->displayStatus();
+    }else if (ans == "2"){
+        a->buildCity();
+        a->displayStatus();
+    }else {
+        cout << "Exiting buid\n";
+    }    
+}
+
+void checkwinner(vector<Player*>& players){
+    for (auto& player : players) {
+        if(player->calculateVictoryPoints() >= 10){
+            cout << "Player " << player->getName() << " wins the game!" << endl;
+            exit(0);
+        }
+    }
+}
+
 void initializeGame(vector<Player*>& players) {
     for (auto& player : players) {
         player->initializeResources();
@@ -567,26 +589,28 @@ int main() {
     SquareCatanBoard catanBoard(4);
     initializeGame(players);
     
-    for(int i = 0; i < 10;i++){
+    for(int i = 0; i < 99;i++){
         cout << "----------------------------------------------" << endl;
         catanBoard.displayBoard();
         cout << "----------------------------------------------" << endl;
         starTurn(players);
         cout << "----------------------------------------------" << endl;
-    for (auto& player : players){
-        cout << "----------------------------------------------" << endl;
-        if(player->isBlocked()) {
-            checkBlocked(player,players);
-            continue;
+        for (auto& player : players){
+            cout << "----------------------------------------------" << endl;
+            if(player->isBlocked()) {
+                checkBlocked(player,players);
+                continue;
+            }
+            catanBoard.nextTurn(player,players);
+                if(i > 2){
+                    checktrade(player, players, bank);
+                    drawspcard(player, players, bank);
+                    checkbuild(player, players);
+                }
+            checkSpecialCard(player, players, bank);
+            checkwinner(players);
+            cout << "----------------------------------------------" << endl;
         }
-        catanBoard.nextTurn(player,players);
-        if(i > 2){
-        checktrade(player, players, bank);
-        drawspcard(player, players, bank);
-        }
-        checkSpecialCard(player, players, bank);
-        cout << "----------------------------------------------" << endl;
-    }
     }
     return 0;
 }
