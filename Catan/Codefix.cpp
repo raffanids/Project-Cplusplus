@@ -333,8 +333,8 @@ class SquareCatanBoard {
     }
 
     void nextTurn(Player* a,vector<Player*>& players) {
-        cout << "----------------------------------------------";
-        cout << "\nPlayer " << a->getName() << "'s turn:\n";
+        cout << "\n----------------------------------------------\n";
+        cout << "Player " << a->getName() << "'s turn:\n";
         int roll = rollDice();
         produceResources(players, roll, a);
         cout << "----------------------------------------------\n";
@@ -375,7 +375,6 @@ void playerSteal(vector<Player*>& players, int i) {
         cout << "Invalid player name. Cannot perform the steal action." << endl;
     }
     players[i]->displayStatus();
-    targetPlayer->displayStatus();
 }
 
 bool isBlocked(vector<Player*>& players) {
@@ -405,6 +404,7 @@ void drawspcard(Player* a,vector<Player*>& players,Bank& bank){
             }
         }
     }
+    cout << "----------------------------------------------\n";
 }
 
 void checkBlocked(Player* a, vector<Player*>& players){
@@ -418,73 +418,59 @@ void checkSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
     string useCard;
     string nameCard;
     for (const string& card : specialcards) {
-        if (card == "stealcard" && card == "blockcard") {
-            cout << a->getName() << " You have a special card." << endl;
-            cout << "Do you want to use it? (yes/no): ";
-            cin >> useCard;
-            if (useCard == "yes") {
-                cout << "Use Steal (1) or block (2) : ";
-                cin >> nameCard;
-                if (card == "stealcard") {
-                    playerSteal(players, distance(players.begin(), find(players.begin(), players.end(), a)));
-                    a->removeSpecialCard(card);
-                } else if (card == "blockcard") {
-                    isBlocked(players);
-                    a->removeSpecialCard(card);
-                    cout << "You used a special card! You can take another turn." << endl;
-                }
-            else{ break; }
+        cout << a->getName() << " You have a " << card << endl;
+        cout << "Do you want to use it? yes(1) or no(2) : ";
+        cin >> useCard;
+        if (useCard == "1") {
+            if (card == "stealcard") {
+                playerSteal(players, distance(players.begin(), find(players.begin(), players.end(), a)));
+                a->removeSpecialCard(card);
+                cout << "You used a special card!" << endl;
+            } else if (card == "blockcard") {
+                isBlocked(players);
+                a->removeSpecialCard(card);
+                cout << "You used a special card!" << endl;
+            } else {
+                cout << "Invalid card type! Returning to main menu." << endl;
             }
+        } else if (useCard == "2") {
+            break;
+        } else {
+            cout << "Invalid option! Returning to main menu." << endl;
         }
-        if (card == "stealcard" || card == "blockcard") {
-            cout << a->getName() << " You have a " << card << endl;
-            cout << "Do you want to use it? (yes/no): ";
-            cin >> useCard;
-
-            if (useCard == "yes") {
-                if (card == "stealcard") {
-                    playerSteal(players, distance(players.begin(), find(players.begin(), players.end(), a)));
-                    a->removeSpecialCard(card);
-                } else if (card == "blockcard") {
-                    isBlocked(players);
-                    a->removeSpecialCard(card);
-                    cout << "You used a special card! You can take another turn." << endl;
-                }
-            else{ break; }
-            }
-        }
-        if(useCard == "no") break;
-    cout << "----------------------------------------------\n\n";
     }
+    cout << "----------------------------------------------\n";
 }
 
 void checktradebankresource(Player* a, vector<Player*>& players, Bank& bank){
     string trade1;
     string trade2;
-    cout << "What do you want to trade? : ";
+    cout << "What do you want to trade? (wood/grain/brick/ore/sheep) : ";
     cin >> trade2;
-    cout << "Trade with? : ";
+    cout << "Trade with? (wood/grain/brick/ore/sheep) : ";
     cin >> trade1;
     a->tradeWithBank(bank,trade1, 4,trade2, 1);
 }
 
 bool checktradeplayer(Player* a,Player* p,string trade1,string trade2,int num1,int num2){
     string check;
+    cout << "----------------------------------------------\n";
     cout << a->getName() << " want to offer " << trade2 << " with " << trade1 << "  " << num2 << " : " << num1 << endl;
-    cout << p->getName() << " want to accept this offer? (yes/no) : ";
+    cout << p->getName() << " want to accept this offer? yes(1) or no(2) : ";
     cin >> check;
-    if(check == "yes"){
+    if(check == "1"){
         return true;
     }else{
         return false;
     }
+    cout << "----------------------------------------------\n";
 }
 
 void checktradeplayerresource(Player* a, vector<Player*>& players, Bank& bank) {
     string playerName, trade1, trade2;
     int num1, num2;
 
-    cout << "Which player do you want to trade with? : ";
+    cout << "Which player do you want to trade with? (p1/p2/p3/p4) : ";
     cin >> playerName;
 
     Player* p = nullptr;
