@@ -337,7 +337,7 @@ void printTurnOrder(const vector<Player*>& players) {
 
 void playerSteal(vector<Player*>& players, int i) {
     string player1, player2, resource;
-    int amount;
+    int amount = 1;
 
     player1 = players[i]->getName();
 
@@ -346,9 +346,6 @@ void playerSteal(vector<Player*>& players, int i) {
 
     cout << "Enter the type of resource you want to steal (wood, grain, brick, ore, sheep): ";
     cin >> resource;
-
-    cout << "Enter the number of resources you want to steal: ";
-    cin >> amount;
 
     Player* targetPlayer = nullptr;
     for (auto& player : players) {
@@ -363,10 +360,8 @@ void playerSteal(vector<Player*>& players, int i) {
     } else {
         cout << "Invalid player name. Cannot perform the steal action." << endl;
     }
-
-    for (const auto& player : players) {
-        player->displayStatus();
-    }
+    players[i]->displayStatus();
+    targetPlayer->displayStatus();
 }
 
 bool isBlocked(vector<Player*>& players) {
@@ -385,15 +380,17 @@ bool isBlocked(vector<Player*>& players) {
 void drawspcard(Player* a,vector<Player*>& players,Bank& bank){
     int luckdraw = rand()%10+1;
     string ans;
-    cout << a->getName() << " Want to draw SpecialCard?(yes/no) : ";
-    cin >> ans;
-    if(ans == "yes"){
-        if(true){
-        a->drawSpecialCard(bank);
-        }else return; 
-    if(ans == "no") return;
-    }
+    if(luckdraw == 9){
+        cout << a->getName() << " Want to draw SpecialCard?(yes/no) : ";
+        cin >> ans;
+            if(ans == "yes"){
+            a->drawSpecialCard(bank);
+            }else if(ans == "no"){
+                return;
+            }
+    }else return; 
 }
+
 
 void checkBlocked(Player* a, vector<Player*>& players){
     if (a->isBlocked()) {
@@ -423,7 +420,7 @@ void checkSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
             }
         }
         if (card == "stealcard" || card == "blockcard") {
-            cout << a->getName() << " You have a special card." << endl;
+            cout << a->getName() << " You have a " << card << endl;
             cout << "Do you want to use it? (yes/no): ";
             cin >> useCard;
 
@@ -437,6 +434,7 @@ void checkSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
             else{ break; }
             }
         }
+        if(useCard == "no") break;
     }
 }
 
@@ -473,9 +471,12 @@ int main() {
     initializeGame(players);
     
     for(int i = 0; i < 10;i++){
+        cout << "----------------------------------------------" << endl;
         catanBoard.displayBoard();
         starTurn(players);
+        cout << "----------------------------------------------" << endl;
     for (auto& player : players){
+        cout << "----------------------------------------------" << endl;
         if(player->isBlocked()) {
             checkBlocked(player,players);
             continue;
@@ -483,6 +484,7 @@ int main() {
         catanBoard.nextTurn(player,players);
         drawspcard(player, players, bank);
         checkSpecialCard(player, players, bank);
+        cout << "----------------------------------------------" << endl;
     }
     }
     return 0;
