@@ -135,19 +135,44 @@ public:
         blocked = isBlocked;
     }
     
-    void addResource(string resource) {
-        if (resource == "Wood") {
-            resources["wood"] += 1;
-        } else if (resource == "Grain") {
-            resources["grain"] += 1;
-        } else if (resource == "Brick") {
-            resources["brick"] += 1;
-        } else if (resource == "Ore") {
-            resources["ore"] += 1;
-        } else if (resource == "Sheep") {
-            resources["sheep"] += 1;
+    void addResource(string resource,int amount) {
+        transform(resource.begin(), resource.end(), resource.begin(), ::tolower);
+        resources[resource] += amount;
+    }
+    
+    bool deductResource(const string& resource, int amount) {
+        if (resources[resource] >= amount) {
+            resources[resource] -= amount;
+            return true;
+        }
+    return false;
+    }
+    
+    bool tradeWithBank(Bank& bank, const string& offerResource, int offerAmount, const string& requestResource, int requestAmount) {
+        if (resources[offerResource] >= offerAmount && bank.resources[requestResource] >= requestAmount) {
+            resources[offerResource] -= offerAmount;
+            resources[requestResource] += requestAmount;
+            bank.resources[requestResource] -= requestAmount;
+            bank.resources[offerResource] += offerAmount;
+            cout << "Trade successful: " << offerAmount << " " << offerResource << " for " << requestAmount << " " << requestResource << endl;
+            return true;
         } else {
-            cout << "?" << endl;
+            cout << "Trade failed due to insufficient resources." << endl;
+            return false;
+        }
+    }
+
+    bool tradeWithPlayer(Player& player, const string& offerResource, int offerAmount, const string& requestResource, int requestAmount) {
+        if (resources[offerResource] >= offerAmount && player.getResources()[requestResource] >= requestAmount) {
+            deductResource(offerResource, offerAmount);
+            player.addResource(offerResource, offerAmount);
+            player.deductResource(requestResource, requestAmount);
+            addResource(requestResource, requestAmount);
+            cout << "Trade successful between " << name << " and " << player.getName() << endl;
+            return true;
+        } else {
+            cout << "Trade failed due to insufficient resources." << endl;
+            return false;
         }
     }
     
@@ -173,21 +198,9 @@ public:
     }
 
     void stealResource(Player& targetPlayer, map<string, int>& targetResources, const string& resourceType, int amount = 1) {
-        if (targetResources["wood"] >= amount && resourceType == "wood") {
-            targetResources["wood"] -= amount;
-            resources["wood"] += amount;
-        } else if (targetResources["grain"] >= amount && resourceType == "grain") {
-            targetResources["grain"] -= amount;
-            resources["grain"] += amount;
-        } else if (targetResources["brick"] >= amount && resourceType == "brick") {
-            targetResources["brick"] -= amount;
-            resources["brick"] += amount;
-        } else if (targetResources["ore"] >= amount && resourceType == "ore") {
-            targetResources["ore"] -= amount;
-            resources["ore"] += amount;
-        } else if (targetResources["sheep"] >= amount && resourceType == "sheep") {
-            targetResources["sheep"] -= amount;
-            resources["sheep"] += amount;
+        if (targetResources[resourceType] >= amount) {
+            targetResources[resourceType] -= amount;
+            resources[resourceType] += amount;
         } else {
             cout << "Cannot steal the specified resource from the target. Only stole what was available." << endl;
         }
@@ -304,7 +317,7 @@ class SquareCatanBoard {
                 if (get<2>(tile) == roll && get<1>(tile) != "Desert") {
                     int houses = 1;
                     string resource = get<1>(tile);
-                    a->addResource(resource);
+                    a->addResource(resource,houses);
                     cout << a->getName() << " ";
                     cout << houses << " " << resource << "(s) produced for Player " << a->getName() << "\n";
                 }
@@ -438,6 +451,78 @@ void checkSpecialCard(Player* a, vector<Player*>& players, Bank& bank) {
     }
 }
 
+void checktradebankresource(Player* a, vector<Player*>& players, Bank& bank){
+    string trade1;
+    string trade2;
+    cout << "What do you want to trade? : ";
+    cin >> trade2;
+    cout << "Trade with? : ";
+    cin >> trade1;
+    a->tradeWithBank(bank,trade1, 4,trade2, 1);
+}
+
+bool checktradeplayer(Player* a,Player* p,string trade1,string trade2,int num1,int num2){
+    string check;
+    cout << a->getName() << " want to offer " << trade2 << " with " << trade1 << "  " << num2 << " : " << num1 << endl;
+    cout << p->getName() << " want to accept this offer? (yes/no) : ";
+    cin >> check;
+    if(check == "yes"){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+void checktradeplayerresource(Player* a, vector<Player*>& players, Bank& bank) {
+    string playerName, trade1, trade2;
+    int num1, num2;
+
+    cout << "Which player do you want to trade with? : ";
+    cin >> playerName;
+
+    Player* p = nullptr;
+    for (Player* player : players) {
+        if (player->getName() == playerName) {
+            p = player;
+            break;
+        }
+    }
+
+    if (p == nullptr) {
+        cout << "Player not found." << endl;
+        return;
+    }
+
+    cout << "What do you want to trade away? : ";
+    cin >> trade2;
+
+    cout << "How many " << trade2 << " do you want to trade? : ";
+    cin >> num2;
+
+    cout << "What do you want in return? : ";
+    cin >> trade1;
+
+    cout << "How many " << trade1 << " do you want in return? : ";
+    cin >> num1;
+
+    if(checktradeplayer(a, p, trade1, trade2, num1, num2)) {
+        a->tradeWithPlayer(*p, trade2, num2, trade1, num1);
+    } else {
+        cout << "Trade offer declined by " << p << "." << endl;
+    }
+}
+
+void checktrade(Player* a, vector<Player*>& players, Bank& bank){
+    string trade;
+    cout << a->getName() << " You want to trading with bank(1) or player(2) : ";
+    cin >> trade;
+    if(trade == "1"){
+        checktradebankresource(a,players,bank);
+    }else{
+        checktradeplayerresource(a,players,bank);
+    }
+}
+
 void initializeGame(vector<Player*>& players) {
     for (auto& player : players) {
         player->initializeResources();
@@ -473,6 +558,7 @@ int main() {
     for(int i = 0; i < 10;i++){
         cout << "----------------------------------------------" << endl;
         catanBoard.displayBoard();
+        cout << "----------------------------------------------" << endl;
         starTurn(players);
         cout << "----------------------------------------------" << endl;
     for (auto& player : players){
@@ -482,6 +568,9 @@ int main() {
             continue;
         }
         catanBoard.nextTurn(player,players);
+        if(i > 2){
+        checktrade(player, players, bank);
+        }
         drawspcard(player, players, bank);
         checkSpecialCard(player, players, bank);
         cout << "----------------------------------------------" << endl;
