@@ -1,4 +1,6 @@
 ﻿  main.cpp
+D:\VS2022SourceCodes\CatanProject\main.cpp(159,26): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\VS2022SourceCodes\CatanProject\main.cpp(160,26): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
 sfml-graphics-s-d.lib(Transformable.obj) : warning LNK4099: PDB '' was not found with 'sfml-graphics-s-d.lib(Transformable.obj)' or at ''; linking object as if no debug info
 sfml-graphics-s-d.lib(Color.obj) : warning LNK4099: PDB '' was not found with 'sfml-graphics-s-d.lib(Color.obj)' or at ''; linking object as if no debug info
 sfml-graphics-s-d.lib(Texture.obj) : warning LNK4099: PDB '' was not found with 'sfml-graphics-s-d.lib(Texture.obj)' or at ''; linking object as if no debug info

@@ -18,6 +18,30 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bank.h" />
+    <ClInclude Include="Facility.h" />
+    <ClInclude Include="GameLoop.h" />
+    <ClInclude Include="HeaderFiles\Facility_Initialize.h" />
+    <ClInclude Include="HeaderFiles\House_Road_Tile.h" />
+    <ClInclude Include="HeaderFiles\player.h" />
+    <ClInclude Include="HeaderFiles\Resource.h" />
+    <ClInclude Include="randomNumber.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="bank.cpp" />
+    <ClCompile Include="Codefix.cpp" />
+    <ClCompile Include="Facility.cpp" />
+    <ClCompile Include="GameLoop.cpp" />
+    <ClCompile Include="last.cpp" />
+    <ClCompile Include="randomNumber.cpp" />
+    <ClCompile Include="SourceFiles\Facility_Initialize.cpp" />
+    <ClCompile Include="SourceFiles\House_Road_Tile.cpp" />
+    <ClCompile Include="SourceFiles\main.cpp" />
+    <ClCompile Include="SourceFiles\player.cpp" />
+    <ClCompile Include="SourceFiles\Resource.cpp" />
+    <ClCompile Include="test.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -110,7 +134,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\SFML\SFML-2.6.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\SFML\SFML-2.6.1\include;D:\VS2022SourceCodes\CatanProject;D:\VS2022SourceCodes\CatanProject\HeaderFiles;D:\VS2022SourceCodes\CatanProject\SourceFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,7 +151,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\SFML\SFML-2.6.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\SFML\SFML-2.6.1\include;D:\VS2022SourceCodes\CatanProject;D:\VS2022SourceCodes\CatanProject\HeaderFiles;D:\VS2022SourceCodes\CatanProject\SourceFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,9 +162,6 @@
       <AdditionalDependencies>sfml-audio-s.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;sfml-graphics-s.lib;opengl32.lib;freetype.lib;sfml-network-s.lib;ws2_32.lib;sfml-system-s.lib;sfml-window-s.lib;winmm.lib;gdi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
