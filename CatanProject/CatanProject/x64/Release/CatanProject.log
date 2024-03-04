@@ -1,8 +1,0 @@
-﻿  last.cpp
-D:\VS2022SourceCodes\CatanProject\last.cpp(101,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-D:\VS2022SourceCodes\CatanProject\last.cpp(102,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-  Generating code
-  Previous IPDB and IOBJ mismatch, fall back to full compilation.
-  All 269 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  Finished generating code
-  CatanProject.vcxproj -> D:\VS2022SourceCodes\CatanProject\x64\Release\CatanProject.exe
