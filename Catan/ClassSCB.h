@@ -1,4 +1,3 @@
-
 class SquareCatanBoard {
     vector<vector<tuple<bool, string, int, int, int>>> board;
     vector<Player> players;
@@ -16,9 +15,8 @@ class SquareCatanBoard {
     void initializeBoard() {
         vector<string> resources = {"Sheep", "Wood", "Brick", "Grain", "Ore", "Sheep", "Grain", "Ore", "Brick", "Wood", "Sheep", "Grain", "Wood"};
 
-        vector<int> numbers = {2, 3, 4, 5, 6, 8, 9, 10, 11, 12 ,5, 6};
+        vector<int> numbers = {2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 4, 5, 6};
         shuffle(numbers.begin(), numbers.end(),default_random_engine(static_cast<unsigned>(std::time(nullptr))));
-        numbers.insert(numbers.begin() + 9, 0);
 
         vector<int> layout = {1, 3, 5, 3, 1};
         int resourceIndex = 0, numberIndex = 0;
