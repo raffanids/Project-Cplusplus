@@ -333,7 +333,7 @@ class SquareCatanBoard {
     void nextTurn(Player* a,vector<Player*>& players) {
         cout << "\n----------------------------------------------\n";
         cout << "Player " << a->getName() << "'s turn:\n";
-        int roll = rollDice();
+        int roll = (rand()%6+1)+(rand()%6+1);
         produceResources(players, roll, a);
         cout << "----------------------------------------------\n";
         a->displayStatus();
@@ -341,7 +341,7 @@ class SquareCatanBoard {
     
     void incresenextTurn(Player* a,vector<Player*>& players) {
         cout << "\nPlayer " << a->getName() << "'s turn:\n";
-        int roll = rollDice();
+        int roll = (rand()%6+1)+(rand()%6+1);
         produceResources(players, roll, a);
         cout << endl;
     }
